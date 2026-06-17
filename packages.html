@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Packages · Monalisa Tech Solutions</title>
+<meta name="description" content="Six trip packages from Monalisa Tech Solutions, with day-by-day detail, real pricing structure and what's excluded.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   MONALISA TECH SOLUTIONS · design system
+   Signature device: the equator line. Kampala sits at 0°N,
+   so every section divider, route and label on this site is
+   drawn off that literal coordinate rather than decoration.
+   ============================================================ */
+:root{
+  --ink:#15201A;
+  --ink-soft:#1E2B22;
+  --canvas:#ECE4D0;
+  --ivory:#F8F4EA;
+  --gold:#C28B33;
+  --gold-bright:#DCA64A;
+  --clay:#9C4A30;
+  --teal:#2F6B63;
+  --charcoal:#211C16;
+  --line:rgba(194,139,51,0.4);
+  --max:1180px;
+  --radius:3px;
+  --serif:"Instrument Serif", Georgia, serif;
+  --sans:"IBM Plex Sans", -apple-system, Segoe UI, sans-serif;
+  --mono:"IBM Plex Mono", "Courier New", monospace;
+}
+
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  margin:0;
+  font-family:var(--sans);
+  background:var(--canvas);
+  color:var(--charcoal);
+  line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+}
+img{max-width:100%;display:block;}
+a{color:inherit;text-decoration:none;}
+h1,h2,h3,h4{font-family:var(--serif);font-weight:400;margin:0;letter-spacing:0.01em;}
+p{margin:0;}
+.container{max-width:var(--max);margin:0 auto;padding:0 28px;}
+:focus-visible{outline:2px solid var(--teal);outline-offset:3px;}
+@media (prefers-reduced-motion: reduce){
+  *{animation-duration:0.001ms !important;animation-iteration-count:1 !important;transition-duration:0.001ms !important;scroll-behavior:auto !important;}
+}
+
+/* ---------- eyebrow / coordinate labels ---------- */
+.eyebrow{
+  font-family:var(--mono);
+  font-size:11.5px;
+  letter-spacing:0.14em;
+  text-transform:uppercase;
+  color:var(--gold);
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+}
+.eyebrow.on-light{color:var(--clay);}
+.eyebrow::before{content:"";width:14px;height:1px;background:currentColor;display:inline-block;}
+
+/* ---------- equator divider (signature element) ---------- */
+.equator{
+  position:relative;
+  width:100%;
+  height:1px;
+  margin:0;
+  background-image:linear-gradient(to right, var(--gold) 0 6px, transparent 6px 14px);
+  background-size:14px 1px;
+  background-repeat:repeat-x;
+  overflow:hidden;
+}
+.equator span{
+  position:absolute;left:0;top:0;height:1px;width:0%;
+  background-image:linear-gradient(to right, var(--gold-bright) 0 6px, transparent 6px 14px);
+  background-size:14px 1px;
+  background-repeat:repeat-x;
+  transition:width 1.4s cubic-bezier(.2,.7,.2,1);
+}
+.equator.in-view span{width:100%;}
+.equator-tick{position:relative;}
+.equator-tick::after{
+  content:attr(data-coord);
+  position:absolute;top:6px;left:0;
+  font-family:var(--mono);font-size:10px;letter-spacing:.08em;color:#8a7e63;
+}
+
+/* ---------- nav ---------- */
+.nav{
+  position:sticky;top:0;z-index:50;
+  background:rgba(21,32,26,0.92);
+  backdrop-filter:blur(6px);
+  border-bottom:1px solid rgba(194,139,51,0.25);
+}
+.nav .container{display:flex;align-items:center;justify-content:space-between;height:72px;}
+.nav__brand{display:flex;flex-direction:column;color:var(--ivory);}
+.nav__brand strong{font-family:var(--serif);font-size:19px;letter-spacing:0.02em;color:var(--ivory);}
+.nav__brand small{font-family:var(--mono);font-size:9.5px;letter-spacing:0.16em;color:var(--gold);text-transform:uppercase;}
+.nav__links{display:flex;align-items:center;gap:30px;}
+.nav__links a{
+  color:#D8D2C2;font-size:14.5px;position:relative;padding:6px 0;
+  transition:color .2s;
+}
+.nav__links a:hover, .nav__links a.active{color:var(--ivory);}
+.nav__links a.active::after{content:"";position:absolute;bottom:0;left:0;right:0;height:1px;background:var(--gold);}
+.nav__cta{
+  background:var(--gold);color:var(--ink);font-family:var(--sans);font-weight:600;
+  font-size:13.5px;padding:10px 18px;border-radius:var(--radius);
+  display:inline-flex;align-items:center;gap:8px;
+  transition:background .2s, transform .2s;
+}
+.nav__cta:hover{background:var(--gold-bright);transform:translateY(-1px);}
+.nav__toggle{display:none;background:none;border:0;color:var(--ivory);font-size:22px;cursor:pointer;}
+@media (max-width:880px){
+  .nav__links{display:none;}
+  .nav__toggle{display:block;}
+  .nav__links.open{
+    display:flex;flex-direction:column;position:absolute;top:72px;left:0;right:0;
+    background:var(--ink);padding:18px 28px 26px;gap:16px;border-bottom:1px solid var(--line);
+  }
+}
+
+/* ---------- buttons ---------- */
+.btn{
+  display:inline-flex;align-items:center;gap:10px;
+  font-family:var(--sans);font-weight:600;font-size:14.5px;
+  padding:13px 24px;border-radius:var(--radius);cursor:pointer;border:1px solid transparent;
+  transition:transform .18s, background .18s, color .18s, border-color .18s;
+}
+.btn--primary{background:var(--gold);color:var(--ink);}
+.btn--primary:hover{background:var(--gold-bright);transform:translateY(-1px);}
+.btn--ghost{border-color:rgba(255,255,255,0.35);color:var(--ivory);}
+.btn--ghost:hover{border-color:var(--gold);color:var(--gold);}
+.btn--dark{border-color:var(--ink);color:var(--ink);}
+.btn--dark:hover{background:var(--ink);color:var(--ivory);}
+.btn--block{width:100%;justify-content:center;}
+.btn:disabled{opacity:0.45;cursor:not-allowed;}
+
+/* ---------- hero ---------- */
+.hero{
+  background:radial-gradient(ellipse at 80% -10%, #233527 0%, var(--ink) 55%);
+  color:var(--ivory);padding:76px 0 64px;position:relative;overflow:hidden;
+}
+.hero .container{display:grid;grid-template-columns:1.05fr 0.95fr;gap:50px;align-items:center;}
+.hero h1{font-size:clamp(38px,5.4vw,64px);line-height:1.08;color:var(--ivory);}
+.hero h1 em{font-style:italic;color:var(--gold-bright);}
+.hero p.lede{font-size:17.5px;color:#CFC8B4;max-width:480px;margin-top:18px;}
+.hero__actions{display:flex;gap:14px;margin-top:30px;flex-wrap:wrap;}
+.hero__stats{display:flex;gap:28px;margin-top:46px;flex-wrap:wrap;}
+.hero__stats div{border-left:1px solid var(--line);padding-left:14px;}
+.hero__stats strong{display:block;font-family:var(--serif);font-size:26px;color:var(--gold-bright);}
+.hero__stats span{font-size:12.5px;color:#A9A18C;}
+@media (max-width:900px){.hero .container{grid-template-columns:1fr;}}
+
+/* ---------- sections ---------- */
+.section{padding:84px 0;}
+.section--tight{padding:56px 0;}
+.section--dark{background:var(--ink);color:var(--ivory);}
+.section--ivory{background:var(--ivory);}
+.section__head{max-width:680px;margin-bottom:46px;}
+.section__head h2{font-size:clamp(28px,3.4vw,42px);margin-top:10px;color:inherit;}
+.section--dark .section__head h2{color:var(--ivory);}
+.section__head p{margin-top:14px;color:#5b5346;font-size:16px;}
+.section--dark .section__head p{color:#B9B19C;}
+
+/* ---------- reveal animation ---------- */
+.reveal{opacity:0;transform:translateY(16px);transition:opacity .6s ease, transform .6s ease;}
+.reveal.in-view{opacity:1;transform:translateY(0);}
+
+/* ---------- grids & cards ---------- */
+.grid{display:grid;gap:24px;}
+.grid--3{grid-template-columns:repeat(3,1fr);}
+.grid--2{grid-template-columns:repeat(2,1fr);}
+.grid--4{grid-template-columns:repeat(4,1fr);}
+@media (max-width:960px){.grid--3,.grid--4{grid-template-columns:repeat(2,1fr);}}
+@media (max-width:620px){.grid--3,.grid--4,.grid--2{grid-template-columns:1fr;}}
+
+.card{background:var(--ivory);border:1px solid #DCD2B8;border-radius:var(--radius);overflow:hidden;}
+.card__art{
+  height:148px;position:relative;display:flex;align-items:flex-end;padding:14px;
+  background:linear-gradient(135deg, var(--ink) 0%, var(--ink-soft) 60%, var(--teal) 130%);
+}
+.card__art svg{width:46px;height:46px;color:rgba(255,255,255,0.85);}
+.card__art .pill{position:absolute;top:14px;right:14px;}
+.card__body{padding:20px 20px 22px;}
+.card__body h3{font-size:20px;margin-top:8px;}
+.card__meta{display:flex;justify-content:space-between;align-items:baseline;margin-top:6px;}
+.card__body p.desc{margin-top:10px;font-size:14.5px;color:#534B3C;}
+.card__foot{display:flex;justify-content:space-between;align-items:center;margin-top:16px;padding-top:14px;border-top:1px solid #E2D8BD;}
+
+.pill{
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;
+  background:rgba(255,255,255,0.14);color:var(--ivory);padding:5px 9px;border-radius:20px;
+  border:1px solid rgba(255,255,255,0.25);
+}
+.pill--clay{background:rgba(156,74,48,0.14);color:var(--clay);border-color:rgba(156,74,48,0.3);}
+.pill--teal{background:rgba(47,107,99,0.12);color:var(--teal);border-color:rgba(47,107,99,0.3);}
+.pill--gold{background:rgba(194,139,51,0.14);color:#8a5f1f;border-color:rgba(194,139,51,0.35);}
+
+.price{font-family:var(--mono);font-size:17px;color:var(--charcoal);}
+.price small{font-size:11px;color:#7d7361;font-family:var(--sans);display:block;}
+
+/* ---------- filters ---------- */
+.filters{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:36px;}
+.filter-chip{
+  font-family:var(--mono);font-size:12px;letter-spacing:.05em;text-transform:uppercase;
+  padding:9px 16px;border:1px solid #C9BD9C;border-radius:30px;cursor:pointer;background:transparent;color:#534B3C;
+  transition:all .18s;
+}
+.filter-chip.active{background:var(--ink);color:var(--ivory);border-color:var(--ink);}
+
+/* ---------- reviews / stories ---------- */
+.review{background:var(--ivory);border:1px solid #DCD2B8;border-radius:var(--radius);padding:24px;}
+.review__stars{color:var(--gold);letter-spacing:2px;font-size:13px;}
+.review p.quote{font-size:15px;margin-top:12px;color:#3A332A;}
+.review__who{display:flex;justify-content:space-between;margin-top:18px;font-size:12.5px;color:#7d7361;border-top:1px solid #E2D8BD;padding-top:12px;}
+
+.story{display:grid;grid-template-columns:200px 1fr;gap:24px;padding:26px 0;border-top:1px solid rgba(255,255,255,0.12);}
+.story__art{height:140px;border-radius:var(--radius);background:linear-gradient(160deg,var(--clay),var(--ink));display:flex;align-items:center;justify-content:center;}
+.story__art svg{width:38px;height:38px;color:rgba(255,255,255,.8);}
+.story h4{color:var(--ivory);font-size:19px;}
+.story p{color:#C9C2AC;font-size:14.5px;margin-top:8px;}
+.story__meta{margin-top:10px;font-family:var(--mono);font-size:11px;color:var(--gold);text-transform:uppercase;letter-spacing:.08em;}
+@media (max-width:700px){.story{grid-template-columns:1fr;}.story__art{height:110px;}}
+
+/* ---------- FAQ ---------- */
+.faq-item{border-bottom:1px solid #D8CCA9;}
+.faq-q{
+  width:100%;text-align:left;background:none;border:0;padding:20px 0;cursor:pointer;
+  display:flex;justify-content:space-between;align-items:center;font-size:16.5px;font-family:var(--serif);color:var(--charcoal);
+}
+.faq-q::after{content:"+";font-family:var(--sans);font-size:20px;color:var(--gold);transition:transform .25s;}
+.faq-item.open .faq-q::after{transform:rotate(45deg);}
+.faq-a{max-height:0;overflow:hidden;transition:max-height .3s ease;}
+.faq-a p{padding:0 0 20px;font-size:14.5px;color:#534B3C;max-width:640px;}
+
+/* ---------- map / routes (destinations page signature) ---------- */
+.routemap{background:var(--ink);border-radius:var(--radius);padding:20px 10px;overflow:hidden;}
+.routemap svg{width:100%;height:auto;display:block;}
+.route-path{fill:none;stroke:var(--gold);stroke-width:1.2;stroke-dasharray:3 4;opacity:.55;transition:opacity .2s, stroke-width .2s;}
+.route-group:hover .route-path{opacity:1;stroke-width:1.8;stroke:var(--gold-bright);}
+.route-dot{fill:var(--ivory);transition:fill .2s, r .2s;}
+.route-group:hover .route-dot{fill:var(--gold-bright);}
+.route-label{font-family:var(--mono);font-size:9.5px;fill:#C9C2AC;letter-spacing:.04em;}
+.route-group:hover .route-label{fill:var(--ivory);}
+.route-hub{fill:var(--gold);}
+
+/* ---------- itinerary timeline ---------- */
+.timeline{position:relative;margin-top:10px;}
+.tl-item{display:grid;grid-template-columns:64px 1fr;gap:18px;padding-bottom:26px;position:relative;}
+.tl-item::before{content:"";position:absolute;left:31px;top:30px;bottom:0;width:1px;background:#D8CCA9;}
+.tl-item:last-child::before{display:none;}
+.tl-day{font-family:var(--mono);font-size:12px;color:var(--ink);background:var(--ivory);border:1px solid var(--gold);border-radius:50%;width:62px;height:62px;display:flex;align-items:center;justify-content:center;text-align:center;line-height:1.2;z-index:1;}
+.tl-body h4{font-size:17px;}
+.tl-body p{font-size:14px;color:#534B3C;margin-top:6px;}
+
+/* ---------- footer ---------- */
+.footer{background:var(--ink);color:#B9B19C;padding:60px 0 26px;}
+.footer .container{display:grid;grid-template-columns:1.3fr 1fr 1fr 1fr;gap:40px;}
+.footer h5{color:var(--ivory);font-family:var(--sans);font-size:13px;letter-spacing:.08em;text-transform:uppercase;margin-bottom:14px;}
+.footer a{display:block;font-size:14px;padding:5px 0;color:#B9B19C;transition:color .2s;}
+.footer a:hover{color:var(--gold);}
+.footer__brand strong{color:var(--ivory);font-family:var(--serif);font-size:20px;}
+.footer__bottom{margin-top:40px;padding-top:24px;border-top:1px solid rgba(255,255,255,0.1);font-size:12.5px;display:flex;justify-content:space-between;color:#7d7361;flex-wrap:wrap;gap:10px;}
+@media (max-width:800px){.footer .container{grid-template-columns:1fr 1fr;}}
+
+/* ---------- whatsapp floating action ---------- */
+.wa-fab{
+  position:fixed;bottom:22px;right:22px;z-index:60;
+  background:#1f9e57;color:#fff;border-radius:30px;padding:13px 18px 13px 14px;
+  display:flex;align-items:center;gap:9px;font-size:13.5px;font-weight:600;
+  box-shadow:0 8px 22px rgba(0,0,0,0.28);transition:transform .2s;
+}
+.wa-fab:hover{transform:translateY(-2px);}
+.wa-fab svg{width:20px;height:20px;}
+
+/* ---------- booking flow ---------- */
+.bk-wrap{display:grid;grid-template-columns:1fr 360px;gap:36px;align-items:flex-start;}
+@media (max-width:900px){.bk-wrap{grid-template-columns:1fr;}}
+.bk-steps{display:flex;gap:0;margin-bottom:40px;list-style:none;padding:0;}
+.bk-steps li{
+  flex:1;text-align:center;font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;
+  padding-bottom:14px;border-bottom:2px solid #D8CCA9;color:#9c9277;position:relative;
+}
+.bk-steps li.active{color:var(--ink);border-color:var(--gold);}
+.bk-steps li.done{color:var(--teal);border-color:var(--teal);}
+.bk-panel{background:var(--ivory);border:1px solid #DCD2B8;border-radius:var(--radius);padding:32px;}
+.bk-panel h3{font-size:22px;margin-bottom:6px;}
+.bk-panel .hint{font-size:13.5px;color:#7d7361;margin-bottom:26px;}
+.field{margin-bottom:18px;}
+.field label{display:block;font-size:13px;font-weight:600;margin-bottom:7px;}
+.field input, .field select{
+  width:100%;padding:11px 13px;border:1px solid #C9BD9C;border-radius:var(--radius);background:#fff;font-family:var(--sans);font-size:14.5px;
+}
+.field input:focus, .field select:focus{border-color:var(--teal);}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+@media (max-width:540px){.field-row{grid-template-columns:1fr;}}
+.field small.error{color:var(--clay);font-size:12px;display:none;margin-top:5px;}
+.field.invalid input{border-color:var(--clay);}
+.field.invalid small.error{display:block;}
+.addon{display:flex;justify-content:space-between;align-items:center;padding:16px 0;border-top:1px solid #E2D8BD;}
+.addon:first-of-type{border-top:0;}
+.addon__info strong{display:block;font-size:15px;}
+.addon__info span{font-size:13px;color:#7d7361;}
+.toggle{position:relative;width:42px;height:24px;background:#D8CCA9;border-radius:14px;cursor:pointer;border:0;flex-shrink:0;}
+.toggle::after{content:"";position:absolute;top:3px;left:3px;width:18px;height:18px;background:#fff;border-radius:50%;transition:transform .2s;}
+.toggle.on{background:var(--teal);}
+.toggle.on::after{transform:translateX(18px);}
+.pay-methods{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0 6px;}
+.pay-chip{border:1px solid #C9BD9C;border-radius:var(--radius);padding:11px 14px;font-size:13px;cursor:pointer;background:#fff;}
+.pay-chip.active{border-color:var(--teal);background:rgba(47,107,99,0.06);}
+
+.summary{position:sticky;top:96px;background:var(--ink);color:var(--ivory);border-radius:var(--radius);padding:28px;}
+.summary h4{color:var(--ivory);font-size:18px;}
+.summary__row{display:flex;justify-content:space-between;padding:10px 0;font-size:14px;border-bottom:1px solid rgba(255,255,255,0.1);color:#C9C2AC;}
+.summary__total{display:flex;justify-content:space-between;padding-top:16px;font-family:var(--mono);font-size:19px;color:var(--gold-bright);}
+.checklist{list-style:none;padding:0;margin-top:18px;}
+.checklist li{font-size:13px;color:#B9B19C;padding:7px 0;display:flex;gap:8px;}
+.checklist li::before{content:"○";color:var(--gold);}
+
+.confirm{text-align:center;padding:50px 20px;}
+.confirm .ring{width:74px;height:74px;border:2px solid var(--teal);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 22px;}
+.confirm .ring svg{width:30px;height:30px;color:var(--teal);}
+.countdown{display:flex;gap:16px;justify-content:center;margin:30px 0;flex-wrap:wrap;}
+.countdown div{background:var(--ink);color:var(--ivory);border-radius:var(--radius);padding:16px 20px;min-width:78px;}
+.countdown strong{display:block;font-family:var(--serif);font-size:28px;color:var(--gold-bright);}
+.countdown span{font-size:10.5px;text-transform:uppercase;letter-spacing:.08em;color:#A9A18C;}
+</style>
+</head>
+<body>
+  <nav class="nav">
+    <div class="container">
+      <a href="index.html" class="nav__brand">
+        <strong>Monalisa Tech Solutions</strong>
+        <small>00.3163° N · Kampala</small>
+      </a>
+      <button class="nav__toggle" id="navToggle" aria-label="Toggle menu">☰</button>
+      <div class="nav__links" id="navLinks">
+        <a href="index.html" class="">Home</a>
+        <a href="destinations.html" class="">Destinations</a>
+        <a href="packages.html" class="active">Packages</a>
+        <a href="booking.html" class="">Plan a trip</a>
+        <a class="nav__cta" href="https://wa.me/256703953711" target="_blank" rel="noopener">WhatsApp us →</a>
+      </div>
+    </div>
+  </nav>
+  <header class="hero" style="padding:64px 0 50px;">
+    <div class="container" style="grid-template-columns:1fr;">
+      <div>
+        <span class="eyebrow">Six trips, priced the way we'd quote them to you</span>
+        <h1 style="font-size:clamp(34px,4.6vw,52px);">What's actually in the price, and what isn't</h1>
+        <p class="lede">Two of these run as full day-by-day plans below. The other four are condensed, ask on WhatsApp and we'll send the complete day sheet for whichever one you're closer to booking.</p>
+      </div>
+    </div>
+  </header>
+
+  <div class="equator"><span></span></div>
+
+  <section class="section section--ivory" id="gorilla">
+    <div class="container">
+      <div style="display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:20px;margin-bottom:30px;">
+        <div>
+          <span class="pill pill--clay">Safari · Photography</span>
+          <h2 style="margin-top:10px;">Gorilla Trekking &amp; Photography Safari</h2>
+          <p style="color:#534B3C;margin-top:8px;max-width:560px;">Lake Mburo, two trekking days across two Bwindi sectors, then Queen Elizabeth for the Kazinga Channel. Built so a photographer gets two distinct gorilla families rather than one rushed encounter.</p>
+        </div>
+        <div style="text-align:right;">
+          <div class="price" style="font-size:26px;">$2,840<small>per person, land only · 7 days</small></div>
+        </div>
+      </div>
+
+      <div class="timeline reveal">
+        <div class="tl-item"><div class="tl-day">DAY<br>1</div><div class="tl-body"><h4>Entebbe to Lake Mburo</h4><p>Arrive Entebbe International, met by your driver-guide. Drive south west to the Lake Mburo area, about four and a half hours, with a stop in Mbarara town. Evening boat ride on the lake if you land early enough.</p></div></div>
+        <div class="tl-item"><div class="tl-day">DAY<br>2</div><div class="tl-body"><h4>Mburo game drive, on to Bwindi</h4><p>Morning game drive for zebra, eland and impala, species you won't see again further south. Continue to Bwindi, roughly four hours, arriving in time for the trek briefing.</p></div></div>
+        <div class="tl-item"><div class="tl-day">DAY<br>3</div><div class="tl-body"><h4>Gorilla trek, Buhoma sector</h4><p>7am briefing at park headquarters. Trek length depends entirely on where your assigned family is that morning, anywhere from forty minutes to four hours each way. Free evening back at the lodge.</p></div></div>
+        <div class="tl-item"><div class="tl-day">DAY<br>4</div><div class="tl-body"><h4>Gorilla trek, Ruhija sector</h4><p>A different sector and a different family, which is the point of booking two days rather than one. Optional Batwa cultural walk in the afternoon for an additional fee.</p></div></div>
+        <div class="tl-item"><div class="tl-day">DAY<br>5</div><div class="tl-body"><h4>To Queen Elizabeth, via Ishasha</h4><p>Drive north with a detour through the Ishasha sector, where lions climb into fig trees during the heat of the day, no guarantee but a strong chance. Afternoon game drive on arrival.</p></div></div>
+        <div class="tl-item"><div class="tl-day">DAY<br>6</div><div class="tl-body"><h4>Kazinga Channel launch, Kasenyi plains</h4><p>Morning boat cruise along the channel for hippos, buffalo and a long list of waterbirds. Afternoon game drive across the Kasenyi plains for lion and the resident hyena clan.</p></div></div>
+        <div class="tl-item"><div class="tl-day">DAY<br>7</div><div class="tl-body"><h4>Fly back to Entebbe</h4><p>Morning at leisure, then a short scheduled flight from Mweya airstrip back to Entebbe, about ninety minutes against five or six hours by road. Connect with your international departure.</p></div></div>
+      </div>
+
+      <div class="grid grid--2" style="margin-top:30px;">
+        <div class="reveal"><h4 style="font-size:16px;">Included</h4><p class="desc" style="margin-top:8px;">Mid-range to upscale lodge accommodation, 4x4 with driver-guide throughout, all park entry fees, the activities listed above, breakfast, lunch and dinner daily.</p></div>
+        <div class="reveal"><h4 style="font-size:16px;">Not included</h4><p class="desc" style="margin-top:8px;">Gorilla permits (around $700 per person, paid directly to Uganda Wildlife Authority and non-transferable), international flights, visa fees, tips, alcoholic drinks, travel insurance, the optional Batwa walk ($15pp). Single supplement +$340.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="equator"><span></span></div>
+
+  <section class="section" id="zanzibar">
+    <div class="container">
+      <div style="display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:20px;margin-bottom:30px;">
+        <div>
+          <span class="pill pill--gold">Honeymoon · Beach</span>
+          <h2 style="margin-top:10px;">Zanzibar Honeymoon Escape</h2>
+          <p style="color:#534B3C;margin-top:8px;max-width:560px;">Three nights Stone Town, three nights a private-pool villa on the east coast. Built deliberately light on scheduled activity.</p>
+        </div>
+        <div style="text-align:right;">
+          <div class="price" style="font-size:26px;">$1,960<small>per person sharing · 6 days</small></div>
+        </div>
+      </div>
+
+      <div class="timeline reveal">
+        <div class="tl-item"><div class="tl-day">DAY<br>1</div><div class="tl-body"><h4>Arrive, Stone Town</h4><p>Land at Abeid Amani Karume Airport, transfer to a boutique hotel inside Stone Town. Welcome dinner on a rooftop overlooking the harbour.</p></div></div>
+        <div class="tl-item"><div class="tl-day">DAY<br>2</div><div class="tl-body"><h4>Stone Town on foot</h4><p>Morning guided walk past the Old Fort and the House of Wonders, through the spice market. Afternoon free, sunset at the Forodhani Gardens food stalls is worth the crowd.</p></div></div>
+        <div class="tl-item"><div class="tl-day">DAY<br>3</div><div class="tl-body"><h4>Transfer to the east coast</h4><p>About ninety minutes by road to your villa, private pool included. Rest of the day is unscheduled on purpose.</p></div></div>
+        <div class="tl-item"><div class="tl-day">DAY<br>4</div><div class="tl-body"><h4>Open day, sunset dhow</h4><p>Free morning, then a sunset dhow cruise with a snorkelling stop along the reef shelf as the tide allows.</p></div></div>
+        <div class="tl-item"><div class="tl-day">DAY<br>5</div><div class="tl-body"><h4>Optional Jozani &amp; Mnemba</h4><p>Full-day add-on to see the red colobus monkeys at Jozani Forest and snorkel off Mnemba atoll, around $95pp. Otherwise, another open beach day.</p></div></div>
+        <div class="tl-item"><div class="tl-day">DAY<br>6</div><div class="tl-body"><h4>Depart</h4><p>Morning at leisure before transfer to the airport for your onward or international flight.</p></div></div>
+      </div>
+
+      <div class="grid grid--2" style="margin-top:30px;">
+        <div class="reveal"><h4 style="font-size:16px;">Included</h4><p class="desc" style="margin-top:8px;">Airport transfers, 3 nights Stone Town boutique hotel, 3 nights east coast villa with private pool, daily breakfast, the Stone Town walking tour and sunset dhow cruise.</p></div>
+        <div class="reveal"><h4 style="font-size:16px;">Not included</h4><p class="desc" style="margin-top:8px;">International flights, the Jozani and Mnemba add-on, spa treatments, alcohol, tips. Villa upgrade to beachfront-direct available on request, subject to availability.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="equator"><span></span></div>
+
+  <section class="section section--ivory">
+    <div class="container">
+      <div class="section__head"><span class="eyebrow on-light">Four more, condensed</span><h2>Ask for the full day sheet on any of these</h2></div>
+      <div class="grid grid--2">
+
+        <div class="card reveal" id="capetown">
+          <div class="card__body" style="padding:26px;">
+            <span class="pill pill--clay">Cultural · Food</span>
+            <h3 style="margin-top:10px;">Cape Town &amp; Stellenbosch</h3>
+            <p class="desc" style="margin-top:8px;">8 days · $3,180pp. Table Mountain and the City Bowl, a full Cape Peninsula day with the Boulders Beach penguins and Cape Point, a wine day through Stellenbosch and Franschhoek built around small producers rather than the three big estates, a half-day at Robben Island, and a free day in the Constantia valley.</p>
+            <div class="card__foot"><span style="font-size:12.5px;color:#7d7361;">Excludes flights, tasting fees at most estates, tips</span></div>
+          </div>
+        </div>
+
+        <div class="card reveal" id="marrakech">
+          <div class="card__body" style="padding:26px;">
+            <span class="pill pill--gold">Adventure · Cultural</span>
+            <h3 style="margin-top:10px;">Marrakech to the Sahara</h3>
+            <p class="desc" style="margin-top:8px;">6 days · $1,540pp. Two nights in the Marrakech medina, the drive over the Atlas through Ait Ben Haddou, a night camped in the Merzouga dunes with a camel trek timed for sunrise, and a return route through the Dades Gorge.</p>
+            <div class="card__foot"><span style="font-size:12.5px;color:#7d7361;">Excludes flights, visa fees where applicable, tips</span></div>
+          </div>
+        </div>
+
+        <div class="card reveal" id="grandtour">
+          <div class="card__body" style="padding:26px;">
+            <span class="pill pill--teal">Luxury</span>
+            <h3 style="margin-top:10px;">Santorini &amp; Swiss Alps Grand Tour</h3>
+            <p class="desc" style="margin-top:8px;">10 days · $4,420pp. Four nights based in Imerovigli with a planned lunch hour in Oia, a wine tasting in Pyrgos, a travel day routed through Athens, five nights in Zermatt with the Gornergrat railway and a glacier excursion, finishing with one night in Zurich before the flight home.</p>
+            <div class="card__foot"><span style="font-size:12.5px;color:#7d7361;">Excludes flights, the Athens layover hotel if the connection requires it</span></div>
+          </div>
+        </div>
+
+        <div class="card reveal" id="maldives-wellness">
+          <div class="card__body" style="padding:26px;">
+            <span class="pill pill--teal">Wellness · Remote work</span>
+            <h3 style="margin-top:10px;">Maldives Wellness Retreat</h3>
+            <p class="desc" style="margin-top:8px;">5 days · $2,260pp. An overwater villa, a daily yoga or breathwork session, one spa treatment included, and a reef snorkelling orientation on day two. House wifi tested around 35 Mbps, fine for video calls, we'd suggest confirming before scheduling anything mission critical.</p>
+            <div class="card__foot"><span style="font-size:12.5px;color:#7d7361;">Excludes seaplane transfer, additional spa treatments, flights</span></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <div class="equator"><span></span></div>
+
+  <section class="section section--dark" id="policy">
+    <div class="container" style="max-width:760px;">
+      <span class="eyebrow">The part nobody enjoys reading</span>
+      <h2 style="margin-top:12px;">Cancellation and payment, in plain terms</h2>
+      <div style="margin-top:24px;color:#C9C2AC;font-size:15px;line-height:1.7;">
+        <p>A booking is confirmed once a 30% deposit clears. For trips involving gorilla permits, that deposit becomes non-refundable as soon as we purchase the permit, since the Uganda Wildlife Authority does not refund or transfer permits once issued, usually within a few days of your deposit.</p>
+        <p style="margin-top:16px;">For everything else, cancelling more than 60 days before travel gets a full refund minus a $60 admin fee. Inside 60 days, the refund depends on what's already been paid to lodges, airlines or transfer operators on your behalf, we will always tell you the exact figure before you decide, not after.</p>
+        <p style="margin-top:16px;">The remaining balance is due 30 days before departure. We accept Visa, Mastercard, bank transfer, and MTN or Airtel Mobile Money for deposits originating in Uganda or Kenya. International card payments carry a 2.5% processing fee, shown at checkout.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer__brand">
+        <strong>Monalisa Tech Solutions</strong>
+        <p style="margin-top:12px;font-size:14px;color:#9c9277;max-width:280px;">
+          A small Kampala-based trip planning desk. We started in the forests of southwestern Uganda and now plan the onward leg too: Zanzibar, the Maldives, Santorini, wherever the trip goes next.
+        </p>
+        <p style="margin-top:16px;font-size:12.5px;color:#7d7361;">Trips are answered by a person, not a queue.</p>
+      </div>
+      <div>
+        <h5>Get in touch</h5>
+        <a href="https://wa.me/256703953711" target="_blank" rel="noopener">WhatsApp +256 703 953 711</a>
+        <a href="mailto:kabuusumonalisa@gmail.com">kabuusumonalisa@gmail.com</a>
+        <a href="#" onclick="return false;">Kampala, Uganda</a>
+      </div>
+      <div>
+        <h5>Explore</h5>
+        <a href="destinations.html">Destinations</a>
+        <a href="packages.html">Packages</a>
+        <a href="booking.html">Plan a trip</a>
+        <a href="index.html#faq">Questions</a>
+      </div>
+      <div>
+        <h5>Good to know</h5>
+        <a href="index.html#stories">Traveler notebook</a>
+        <a href="packages.html#policy">Cancellation policy</a>
+        <a href="booking.html#entry">Entry requirements</a>
+      </div>
+    </div>
+    <div class="container footer__bottom">
+      <span>Monalisa Tech Solutions, Kampala · est. 2018</span>
+      <span>Demonstration platform · pricing shown is indicative</span>
+    </div>
+  </footer>
+
+  <a class="wa-fab" href="https://wa.me/256703953711" target="_blank" rel="noopener">
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5.1-1.3A10 10 0 1 0 12 2zm5.8 14.2c-.3.8-1.6 1.5-2.3 1.6-.6.1-1.3.2-4.1-1-2.3-1-3.8-3.3-4-3.6-.1-.3-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.3.6-.4.8-.4h.6c.2 0 .5 0 .7.5l1 2.3c.1.2.1.4 0 .6l-.6.8c-.1.2-.2.3 0 .6.3.5 1 1.3 1.7 1.9.9.7 1.6 1 1.9 1.1.2.1.4.1.6-.1l.9-1c.2-.2.4-.2.6-.1l2.1 1c.2.1.4.2.4.4.1.2.1.8-.2 1.6z"/></svg>
+    Chat on WhatsApp
+  </a>
+  <script>
+// nav toggle
+const navToggle = document.getElementById('navToggle');
+const navLinks = document.getElementById('navLinks');
+if(navToggle){navToggle.addEventListener('click',()=>navLinks.classList.toggle('open'));}
+
+// scroll reveal for .reveal and .equator
+const io = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in-view'); } });
+},{threshold:0.18});
+document.querySelectorAll('.reveal, .equator').forEach(el=>io.observe(el));
+
+// faq accordion
+document.querySelectorAll('.faq-q').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    const item = btn.closest('.faq-item');
+    const ans = item.querySelector('.faq-a');
+    const isOpen = item.classList.contains('open');
+    document.querySelectorAll('.faq-item.open').forEach(o=>{
+      if(o!==item){o.classList.remove('open'); o.querySelector('.faq-a').style.maxHeight=null;}
+    });
+    if(isOpen){ item.classList.remove('open'); ans.style.maxHeight=null; }
+    else{ item.classList.add('open'); ans.style.maxHeight = ans.scrollHeight+'px'; }
+  });
+});
+  </script>
+</body>
+</html>

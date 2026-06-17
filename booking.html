@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plan a trip · Monalisa Tech Solutions</title>
+<meta name="description" content="A five-step booking flow demo for Monalisa Tech Solutions: trip selection, traveler details, add-ons, payment and confirmation.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   MONALISA TECH SOLUTIONS · design system
+   Signature device: the equator line. Kampala sits at 0°N,
+   so every section divider, route and label on this site is
+   drawn off that literal coordinate rather than decoration.
+   ============================================================ */
+:root{
+  --ink:#15201A;
+  --ink-soft:#1E2B22;
+  --canvas:#ECE4D0;
+  --ivory:#F8F4EA;
+  --gold:#C28B33;
+  --gold-bright:#DCA64A;
+  --clay:#9C4A30;
+  --teal:#2F6B63;
+  --charcoal:#211C16;
+  --line:rgba(194,139,51,0.4);
+  --max:1180px;
+  --radius:3px;
+  --serif:"Instrument Serif", Georgia, serif;
+  --sans:"IBM Plex Sans", -apple-system, Segoe UI, sans-serif;
+  --mono:"IBM Plex Mono", "Courier New", monospace;
+}
+
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  margin:0;
+  font-family:var(--sans);
+  background:var(--canvas);
+  color:var(--charcoal);
+  line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+}
+img{max-width:100%;display:block;}
+a{color:inherit;text-decoration:none;}
+h1,h2,h3,h4{font-family:var(--serif);font-weight:400;margin:0;letter-spacing:0.01em;}
+p{margin:0;}
+.container{max-width:var(--max);margin:0 auto;padding:0 28px;}
+:focus-visible{outline:2px solid var(--teal);outline-offset:3px;}
+@media (prefers-reduced-motion: reduce){
+  *{animation-duration:0.001ms !important;animation-iteration-count:1 !important;transition-duration:0.001ms !important;scroll-behavior:auto !important;}
+}
+
+/* ---------- eyebrow / coordinate labels ---------- */
+.eyebrow{
+  font-family:var(--mono);
+  font-size:11.5px;
+  letter-spacing:0.14em;
+  text-transform:uppercase;
+  color:var(--gold);
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+}
+.eyebrow.on-light{color:var(--clay);}
+.eyebrow::before{content:"";width:14px;height:1px;background:currentColor;display:inline-block;}
+
+/* ---------- equator divider (signature element) ---------- */
+.equator{
+  position:relative;
+  width:100%;
+  height:1px;
+  margin:0;
+  background-image:linear-gradient(to right, var(--gold) 0 6px, transparent 6px 14px);
+  background-size:14px 1px;
+  background-repeat:repeat-x;
+  overflow:hidden;
+}
+.equator span{
+  position:absolute;left:0;top:0;height:1px;width:0%;
+  background-image:linear-gradient(to right, var(--gold-bright) 0 6px, transparent 6px 14px);
+  background-size:14px 1px;
+  background-repeat:repeat-x;
+  transition:width 1.4s cubic-bezier(.2,.7,.2,1);
+}
+.equator.in-view span{width:100%;}
+.equator-tick{position:relative;}
+.equator-tick::after{
+  content:attr(data-coord);
+  position:absolute;top:6px;left:0;
+  font-family:var(--mono);font-size:10px;letter-spacing:.08em;color:#8a7e63;
+}
+
+/* ---------- nav ---------- */
+.nav{
+  position:sticky;top:0;z-index:50;
+  background:rgba(21,32,26,0.92);
+  backdrop-filter:blur(6px);
+  border-bottom:1px solid rgba(194,139,51,0.25);
+}
+.nav .container{display:flex;align-items:center;justify-content:space-between;height:72px;}
+.nav__brand{display:flex;flex-direction:column;color:var(--ivory);}
+.nav__brand strong{font-family:var(--serif);font-size:19px;letter-spacing:0.02em;color:var(--ivory);}
+.nav__brand small{font-family:var(--mono);font-size:9.5px;letter-spacing:0.16em;color:var(--gold);text-transform:uppercase;}
+.nav__links{display:flex;align-items:center;gap:30px;}
+.nav__links a{
+  color:#D8D2C2;font-size:14.5px;position:relative;padding:6px 0;
+  transition:color .2s;
+}
+.nav__links a:hover, .nav__links a.active{color:var(--ivory);}
+.nav__links a.active::after{content:"";position:absolute;bottom:0;left:0;right:0;height:1px;background:var(--gold);}
+.nav__cta{
+  background:var(--gold);color:var(--ink);font-family:var(--sans);font-weight:600;
+  font-size:13.5px;padding:10px 18px;border-radius:var(--radius);
+  display:inline-flex;align-items:center;gap:8px;
+  transition:background .2s, transform .2s;
+}
+.nav__cta:hover{background:var(--gold-bright);transform:translateY(-1px);}
+.nav__toggle{display:none;background:none;border:0;color:var(--ivory);font-size:22px;cursor:pointer;}
+@media (max-width:880px){
+  .nav__links{display:none;}
+  .nav__toggle{display:block;}
+  .nav__links.open{
+    display:flex;flex-direction:column;position:absolute;top:72px;left:0;right:0;
+    background:var(--ink);padding:18px 28px 26px;gap:16px;border-bottom:1px solid var(--line);
+  }
+}
+
+/* ---------- buttons ---------- */
+.btn{
+  display:inline-flex;align-items:center;gap:10px;
+  font-family:var(--sans);font-weight:600;font-size:14.5px;
+  padding:13px 24px;border-radius:var(--radius);cursor:pointer;border:1px solid transparent;
+  transition:transform .18s, background .18s, color .18s, border-color .18s;
+}
+.btn--primary{background:var(--gold);color:var(--ink);}
+.btn--primary:hover{background:var(--gold-bright);transform:translateY(-1px);}
+.btn--ghost{border-color:rgba(255,255,255,0.35);color:var(--ivory);}
+.btn--ghost:hover{border-color:var(--gold);color:var(--gold);}
+.btn--dark{border-color:var(--ink);color:var(--ink);}
+.btn--dark:hover{background:var(--ink);color:var(--ivory);}
+.btn--block{width:100%;justify-content:center;}
+.btn:disabled{opacity:0.45;cursor:not-allowed;}
+
+/* ---------- hero ---------- */
+.hero{
+  background:radial-gradient(ellipse at 80% -10%, #233527 0%, var(--ink) 55%);
+  color:var(--ivory);padding:76px 0 64px;position:relative;overflow:hidden;
+}
+.hero .container{display:grid;grid-template-columns:1.05fr 0.95fr;gap:50px;align-items:center;}
+.hero h1{font-size:clamp(38px,5.4vw,64px);line-height:1.08;color:var(--ivory);}
+.hero h1 em{font-style:italic;color:var(--gold-bright);}
+.hero p.lede{font-size:17.5px;color:#CFC8B4;max-width:480px;margin-top:18px;}
+.hero__actions{display:flex;gap:14px;margin-top:30px;flex-wrap:wrap;}
+.hero__stats{display:flex;gap:28px;margin-top:46px;flex-wrap:wrap;}
+.hero__stats div{border-left:1px solid var(--line);padding-left:14px;}
+.hero__stats strong{display:block;font-family:var(--serif);font-size:26px;color:var(--gold-bright);}
+.hero__stats span{font-size:12.5px;color:#A9A18C;}
+@media (max-width:900px){.hero .container{grid-template-columns:1fr;}}
+
+/* ---------- sections ---------- */
+.section{padding:84px 0;}
+.section--tight{padding:56px 0;}
+.section--dark{background:var(--ink);color:var(--ivory);}
+.section--ivory{background:var(--ivory);}
+.section__head{max-width:680px;margin-bottom:46px;}
+.section__head h2{font-size:clamp(28px,3.4vw,42px);margin-top:10px;color:inherit;}
+.section--dark .section__head h2{color:var(--ivory);}
+.section__head p{margin-top:14px;color:#5b5346;font-size:16px;}
+.section--dark .section__head p{color:#B9B19C;}
+
+/* ---------- reveal animation ---------- */
+.reveal{opacity:0;transform:translateY(16px);transition:opacity .6s ease, transform .6s ease;}
+.reveal.in-view{opacity:1;transform:translateY(0);}
+
+/* ---------- grids & cards ---------- */
+.grid{display:grid;gap:24px;}
+.grid--3{grid-template-columns:repeat(3,1fr);}
+.grid--2{grid-template-columns:repeat(2,1fr);}
+.grid--4{grid-template-columns:repeat(4,1fr);}
+@media (max-width:960px){.grid--3,.grid--4{grid-template-columns:repeat(2,1fr);}}
+@media (max-width:620px){.grid--3,.grid--4,.grid--2{grid-template-columns:1fr;}}
+
+.card{background:var(--ivory);border:1px solid #DCD2B8;border-radius:var(--radius);overflow:hidden;}
+.card__art{
+  height:148px;position:relative;display:flex;align-items:flex-end;padding:14px;
+  background:linear-gradient(135deg, var(--ink) 0%, var(--ink-soft) 60%, var(--teal) 130%);
+}
+.card__art svg{width:46px;height:46px;color:rgba(255,255,255,0.85);}
+.card__art .pill{position:absolute;top:14px;right:14px;}
+.card__body{padding:20px 20px 22px;}
+.card__body h3{font-size:20px;margin-top:8px;}
+.card__meta{display:flex;justify-content:space-between;align-items:baseline;margin-top:6px;}
+.card__body p.desc{margin-top:10px;font-size:14.5px;color:#534B3C;}
+.card__foot{display:flex;justify-content:space-between;align-items:center;margin-top:16px;padding-top:14px;border-top:1px solid #E2D8BD;}
+
+.pill{
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;
+  background:rgba(255,255,255,0.14);color:var(--ivory);padding:5px 9px;border-radius:20px;
+  border:1px solid rgba(255,255,255,0.25);
+}
+.pill--clay{background:rgba(156,74,48,0.14);color:var(--clay);border-color:rgba(156,74,48,0.3);}
+.pill--teal{background:rgba(47,107,99,0.12);color:var(--teal);border-color:rgba(47,107,99,0.3);}
+.pill--gold{background:rgba(194,139,51,0.14);color:#8a5f1f;border-color:rgba(194,139,51,0.35);}
+
+.price{font-family:var(--mono);font-size:17px;color:var(--charcoal);}
+.price small{font-size:11px;color:#7d7361;font-family:var(--sans);display:block;}
+
+/* ---------- filters ---------- */
+.filters{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:36px;}
+.filter-chip{
+  font-family:var(--mono);font-size:12px;letter-spacing:.05em;text-transform:uppercase;
+  padding:9px 16px;border:1px solid #C9BD9C;border-radius:30px;cursor:pointer;background:transparent;color:#534B3C;
+  transition:all .18s;
+}
+.filter-chip.active{background:var(--ink);color:var(--ivory);border-color:var(--ink);}
+
+/* ---------- reviews / stories ---------- */
+.review{background:var(--ivory);border:1px solid #DCD2B8;border-radius:var(--radius);padding:24px;}
+.review__stars{color:var(--gold);letter-spacing:2px;font-size:13px;}
+.review p.quote{font-size:15px;margin-top:12px;color:#3A332A;}
+.review__who{display:flex;justify-content:space-between;margin-top:18px;font-size:12.5px;color:#7d7361;border-top:1px solid #E2D8BD;padding-top:12px;}
+
+.story{display:grid;grid-template-columns:200px 1fr;gap:24px;padding:26px 0;border-top:1px solid rgba(255,255,255,0.12);}
+.story__art{height:140px;border-radius:var(--radius);background:linear-gradient(160deg,var(--clay),var(--ink));display:flex;align-items:center;justify-content:center;}
+.story__art svg{width:38px;height:38px;color:rgba(255,255,255,.8);}
+.story h4{color:var(--ivory);font-size:19px;}
+.story p{color:#C9C2AC;font-size:14.5px;margin-top:8px;}
+.story__meta{margin-top:10px;font-family:var(--mono);font-size:11px;color:var(--gold);text-transform:uppercase;letter-spacing:.08em;}
+@media (max-width:700px){.story{grid-template-columns:1fr;}.story__art{height:110px;}}
+
+/* ---------- FAQ ---------- */
+.faq-item{border-bottom:1px solid #D8CCA9;}
+.faq-q{
+  width:100%;text-align:left;background:none;border:0;padding:20px 0;cursor:pointer;
+  display:flex;justify-content:space-between;align-items:center;font-size:16.5px;font-family:var(--serif);color:var(--charcoal);
+}
+.faq-q::after{content:"+";font-family:var(--sans);font-size:20px;color:var(--gold);transition:transform .25s;}
+.faq-item.open .faq-q::after{transform:rotate(45deg);}
+.faq-a{max-height:0;overflow:hidden;transition:max-height .3s ease;}
+.faq-a p{padding:0 0 20px;font-size:14.5px;color:#534B3C;max-width:640px;}
+
+/* ---------- map / routes (destinations page signature) ---------- */
+.routemap{background:var(--ink);border-radius:var(--radius);padding:20px 10px;overflow:hidden;}
+.routemap svg{width:100%;height:auto;display:block;}
+.route-path{fill:none;stroke:var(--gold);stroke-width:1.2;stroke-dasharray:3 4;opacity:.55;transition:opacity .2s, stroke-width .2s;}
+.route-group:hover .route-path{opacity:1;stroke-width:1.8;stroke:var(--gold-bright);}
+.route-dot{fill:var(--ivory);transition:fill .2s, r .2s;}
+.route-group:hover .route-dot{fill:var(--gold-bright);}
+.route-label{font-family:var(--mono);font-size:9.5px;fill:#C9C2AC;letter-spacing:.04em;}
+.route-group:hover .route-label{fill:var(--ivory);}
+.route-hub{fill:var(--gold);}
+
+/* ---------- itinerary timeline ---------- */
+.timeline{position:relative;margin-top:10px;}
+.tl-item{display:grid;grid-template-columns:64px 1fr;gap:18px;padding-bottom:26px;position:relative;}
+.tl-item::before{content:"";position:absolute;left:31px;top:30px;bottom:0;width:1px;background:#D8CCA9;}
+.tl-item:last-child::before{display:none;}
+.tl-day{font-family:var(--mono);font-size:12px;color:var(--ink);background:var(--ivory);border:1px solid var(--gold);border-radius:50%;width:62px;height:62px;display:flex;align-items:center;justify-content:center;text-align:center;line-height:1.2;z-index:1;}
+.tl-body h4{font-size:17px;}
+.tl-body p{font-size:14px;color:#534B3C;margin-top:6px;}
+
+/* ---------- footer ---------- */
+.footer{background:var(--ink);color:#B9B19C;padding:60px 0 26px;}
+.footer .container{display:grid;grid-template-columns:1.3fr 1fr 1fr 1fr;gap:40px;}
+.footer h5{color:var(--ivory);font-family:var(--sans);font-size:13px;letter-spacing:.08em;text-transform:uppercase;margin-bottom:14px;}
+.footer a{display:block;font-size:14px;padding:5px 0;color:#B9B19C;transition:color .2s;}
+.footer a:hover{color:var(--gold);}
+.footer__brand strong{color:var(--ivory);font-family:var(--serif);font-size:20px;}
+.footer__bottom{margin-top:40px;padding-top:24px;border-top:1px solid rgba(255,255,255,0.1);font-size:12.5px;display:flex;justify-content:space-between;color:#7d7361;flex-wrap:wrap;gap:10px;}
+@media (max-width:800px){.footer .container{grid-template-columns:1fr 1fr;}}
+
+/* ---------- whatsapp floating action ---------- */
+.wa-fab{
+  position:fixed;bottom:22px;right:22px;z-index:60;
+  background:#1f9e57;color:#fff;border-radius:30px;padding:13px 18px 13px 14px;
+  display:flex;align-items:center;gap:9px;font-size:13.5px;font-weight:600;
+  box-shadow:0 8px 22px rgba(0,0,0,0.28);transition:transform .2s;
+}
+.wa-fab:hover{transform:translateY(-2px);}
+.wa-fab svg{width:20px;height:20px;}
+
+/* ---------- booking flow ---------- */
+.bk-wrap{display:grid;grid-template-columns:1fr 360px;gap:36px;align-items:flex-start;}
+@media (max-width:900px){.bk-wrap{grid-template-columns:1fr;}}
+.bk-steps{display:flex;gap:0;margin-bottom:40px;list-style:none;padding:0;}
+.bk-steps li{
+  flex:1;text-align:center;font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;
+  padding-bottom:14px;border-bottom:2px solid #D8CCA9;color:#9c9277;position:relative;
+}
+.bk-steps li.active{color:var(--ink);border-color:var(--gold);}
+.bk-steps li.done{color:var(--teal);border-color:var(--teal);}
+.bk-panel{background:var(--ivory);border:1px solid #DCD2B8;border-radius:var(--radius);padding:32px;}
+.bk-panel h3{font-size:22px;margin-bottom:6px;}
+.bk-panel .hint{font-size:13.5px;color:#7d7361;margin-bottom:26px;}
+.field{margin-bottom:18px;}
+.field label{display:block;font-size:13px;font-weight:600;margin-bottom:7px;}
+.field input, .field select{
+  width:100%;padding:11px 13px;border:1px solid #C9BD9C;border-radius:var(--radius);background:#fff;font-family:var(--sans);font-size:14.5px;
+}
+.field input:focus, .field select:focus{border-color:var(--teal);}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+@media (max-width:540px){.field-row{grid-template-columns:1fr;}}
+.field small.error{color:var(--clay);font-size:12px;display:none;margin-top:5px;}
+.field.invalid input{border-color:var(--clay);}
+.field.invalid small.error{display:block;}
+.addon{display:flex;justify-content:space-between;align-items:center;padding:16px 0;border-top:1px solid #E2D8BD;}
+.addon:first-of-type{border-top:0;}
+.addon__info strong{display:block;font-size:15px;}
+.addon__info span{font-size:13px;color:#7d7361;}
+.toggle{position:relative;width:42px;height:24px;background:#D8CCA9;border-radius:14px;cursor:pointer;border:0;flex-shrink:0;}
+.toggle::after{content:"";position:absolute;top:3px;left:3px;width:18px;height:18px;background:#fff;border-radius:50%;transition:transform .2s;}
+.toggle.on{background:var(--teal);}
+.toggle.on::after{transform:translateX(18px);}
+.pay-methods{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0 6px;}
+.pay-chip{border:1px solid #C9BD9C;border-radius:var(--radius);padding:11px 14px;font-size:13px;cursor:pointer;background:#fff;}
+.pay-chip.active{border-color:var(--teal);background:rgba(47,107,99,0.06);}
+
+.summary{position:sticky;top:96px;background:var(--ink);color:var(--ivory);border-radius:var(--radius);padding:28px;}
+.summary h4{color:var(--ivory);font-size:18px;}
+.summary__row{display:flex;justify-content:space-between;padding:10px 0;font-size:14px;border-bottom:1px solid rgba(255,255,255,0.1);color:#C9C2AC;}
+.summary__total{display:flex;justify-content:space-between;padding-top:16px;font-family:var(--mono);font-size:19px;color:var(--gold-bright);}
+.checklist{list-style:none;padding:0;margin-top:18px;}
+.checklist li{font-size:13px;color:#B9B19C;padding:7px 0;display:flex;gap:8px;}
+.checklist li::before{content:"○";color:var(--gold);}
+
+.confirm{text-align:center;padding:50px 20px;}
+.confirm .ring{width:74px;height:74px;border:2px solid var(--teal);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 22px;}
+.confirm .ring svg{width:30px;height:30px;color:var(--teal);}
+.countdown{display:flex;gap:16px;justify-content:center;margin:30px 0;flex-wrap:wrap;}
+.countdown div{background:var(--ink);color:var(--ivory);border-radius:var(--radius);padding:16px 20px;min-width:78px;}
+.countdown strong{display:block;font-family:var(--serif);font-size:28px;color:var(--gold-bright);}
+.countdown span{font-size:10.5px;text-transform:uppercase;letter-spacing:.08em;color:#A9A18C;}
+</style>
+</head>
+<body>
+  <nav class="nav">
+    <div class="container">
+      <a href="index.html" class="nav__brand">
+        <strong>Monalisa Tech Solutions</strong>
+        <small>00.3163° N · Kampala</small>
+      </a>
+      <button class="nav__toggle" id="navToggle" aria-label="Toggle menu">☰</button>
+      <div class="nav__links" id="navLinks">
+        <a href="index.html" class="">Home</a>
+        <a href="destinations.html" class="">Destinations</a>
+        <a href="packages.html" class="">Packages</a>
+        <a href="booking.html" class="active">Plan a trip</a>
+        <a class="nav__cta" href="https://wa.me/256703953711" target="_blank" rel="noopener">WhatsApp us →</a>
+      </div>
+    </div>
+  </nav>
+  <header class="hero" style="padding:56px 0 40px;">
+    <div class="container" style="grid-template-columns:1fr;">
+      <div>
+        <span class="eyebrow">Five steps, no account required</span>
+        <h1 style="font-size:clamp(32px,4.2vw,46px);">Plan a trip</h1>
+        <p class="lede">This is a working demo of the flow, the price updates as you go and nothing is actually charged. A real booking ends with a person confirming details over WhatsApp before any deposit is taken.</p>
+      </div>
+    </div>
+  </header>
+
+  <section class="section--tight">
+    <div class="container">
+
+      <ol class="bk-steps" id="stepNav">
+        <li class="active" data-step="1">1 · Trip</li>
+        <li data-step="2">2 · Travelers</li>
+        <li data-step="3">3 · Add-ons</li>
+        <li data-step="4">4 · Payment</li>
+        <li data-step="5">5 · Confirmation</li>
+      </ol>
+
+      <div class="bk-wrap">
+        <div>
+
+          <div class="bk-panel" id="step1">
+            <h3>Choose your trip</h3>
+            <p class="hint">Pick a package and a rough date. Everything here can change later, this just sets the starting price.</p>
+            <div class="field">
+              <label for="pkgSelect">Package</label>
+              <select id="pkgSelect">
+                <option value="gorilla">Gorilla Trekking &amp; Photography Safari · $2,840pp</option>
+                <option value="zanzibar">Zanzibar Honeymoon Escape · $1,960pp</option>
+                <option value="capetown">Cape Town &amp; Stellenbosch · $3,180pp</option>
+                <option value="marrakech">Marrakech to the Sahara · $1,540pp</option>
+                <option value="grandtour">Santorini &amp; Swiss Alps Grand Tour · $4,420pp</option>
+                <option value="maldives">Maldives Wellness Retreat · $2,260pp</option>
+              </select>
+            </div>
+            <div class="field-row">
+              <div class="field">
+                <label for="travelDate">Travel start date</label>
+                <input type="date" id="travelDate">
+              </div>
+              <div class="field">
+                <label for="travelerCount">Travelers</label>
+                <input type="number" id="travelerCount" min="1" max="12" value="2">
+              </div>
+            </div>
+            <button class="btn btn--primary btn--block" onclick="goStep(2)">Continue to travelers →</button>
+          </div>
+
+          <div class="bk-panel" id="step2" style="display:none;">
+            <h3>Lead traveler details</h3>
+            <p class="hint">We only need the lead traveler for now, the rest of your group can be added once permits and rooms are confirmed.</p>
+            <div class="field-row">
+              <div class="field" id="f-name"><label for="fullName">Full name</label><input type="text" id="fullName" placeholder="As it appears on your passport"><small class="error">Enter the lead traveler's full name.</small></div>
+              <div class="field" id="f-email"><label for="email">Email</label><input type="email" id="email" placeholder="you@email.com"><small class="error">Enter a valid email address.</small></div>
+            </div>
+            <div class="field-row">
+              <div class="field" id="f-phone"><label for="phone">WhatsApp number</label><input type="text" id="phone" placeholder="+256 7..."><small class="error">Enter a number we can reach on WhatsApp.</small></div>
+              <div class="field"><label for="nationality">Nationality</label><input type="text" id="nationality" placeholder="For visa and permit paperwork"></div>
+            </div>
+            <div class="field"><label for="passportExpiry">Passport expiry date</label><input type="date" id="passportExpiry"></div>
+            <div class="field"><label for="notes">Anything we should know</label><input type="text" id="notes" placeholder="Dietary needs, mobility, special occasion"></div>
+            <div style="display:flex;gap:12px;">
+              <button class="btn btn--dark" onclick="goStep(1)" style="flex:0 0 auto;">← Back</button>
+              <button class="btn btn--primary" style="flex:1;" onclick="validateStep2()">Continue to add-ons →</button>
+            </div>
+          </div>
+
+          <div class="bk-panel" id="step3" style="display:none;">
+            <h3>Add-ons</h3>
+            <p class="hint">All optional. Prices marked "pp" multiply by your traveler count, the rest are a flat fee per booking.</p>
+            <div class="addon"><div class="addon__info"><strong>Travel insurance</strong><span>$45 pp · medical and trip cancellation cover</span></div><button class="toggle" data-addon="insurance" data-pp="45" onclick="toggleAddon(this)"></button></div>
+            <div class="addon"><div class="addon__info"><strong>Batwa cultural walk</strong><span>$15 pp · half-day, relevant for Bwindi-based trips</span></div><button class="toggle" data-addon="batwa" data-pp="15" onclick="toggleAddon(this)"></button></div>
+            <div class="addon"><div class="addon__info"><strong>Airport lounge access</strong><span>$60 pp · Entebbe departure lounge</span></div><button class="toggle" data-addon="lounge" data-pp="60" onclick="toggleAddon(this)"></button></div>
+            <div class="addon"><div class="addon__info"><strong>Private vehicle, no shared transfers</strong><span>$180 pp · your own driver-guide throughout</span></div><button class="toggle" data-addon="private" data-pp="180" onclick="toggleAddon(this)"></button></div>
+            <div class="addon"><div class="addon__info"><strong>Extra pre-departure night in Kampala</strong><span>$120 flat · useful for early gorilla briefings</span></div><button class="toggle" data-addon="prenight" data-flat="120" onclick="toggleAddon(this)"></button></div>
+            <div style="display:flex;gap:12px;margin-top:10px;">
+              <button class="btn btn--dark" onclick="goStep(2)" style="flex:0 0 auto;">← Back</button>
+              <button class="btn btn--primary" style="flex:1;" onclick="goStep(4)">Continue to payment →</button>
+            </div>
+          </div>
+
+          <div class="bk-panel" id="step4" style="display:none;">
+            <h3>Payment</h3>
+            <p class="hint">A 30% deposit confirms the booking. The balance is due 30 days before travel.</p>
+            <div class="pay-methods">
+              <button class="pay-chip active" onclick="selectPay(this)">Visa / Mastercard</button>
+              <button class="pay-chip" onclick="selectPay(this)">PayPal</button>
+              <button class="pay-chip" onclick="selectPay(this)">Apple Pay / Google Pay</button>
+              <button class="pay-chip" onclick="selectPay(this)">MTN / Airtel Mobile Money</button>
+              <button class="pay-chip" onclick="selectPay(this)">Bank transfer</button>
+            </div>
+            <div class="field" style="margin-top:18px;"><label for="cardName">Name on card</label><input type="text" id="cardName" placeholder="Optional in this demo"></div>
+            <p style="font-size:12.5px;color:#7d7361;margin-top:6px;">This is a demonstration checkout. No payment details are transmitted or stored, and no charge occurs.</p>
+            <div style="display:flex;gap:12px;margin-top:18px;">
+              <button class="btn btn--dark" onclick="goStep(3)" style="flex:0 0 auto;">← Back</button>
+              <button class="btn btn--primary" style="flex:1;" onclick="confirmBooking()">Confirm booking →</button>
+            </div>
+          </div>
+
+          <div class="bk-panel" id="step5" style="display:none;">
+            <div class="confirm">
+              <div class="ring"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 13l4 4L19 7"/></svg></div>
+              <h3 id="confirmRef">Booking reference MTS-2026-00000</h3>
+              <p style="color:#534B3C;margin-top:8px;">A confirmation has been sent to your email. Someone from the team will message you on WhatsApp within six hours to confirm the file and request the deposit.</p>
+              <div class="countdown" id="countdownBox"></div>
+              <div style="max-width:420px;margin:0 auto;text-align:left;">
+                <h4 style="font-size:15px;margin-bottom:6px;">Before you go</h4>
+                <ul class="checklist">
+                  <li>Passport valid at least 6 months past your return date</li>
+                  <li>Yellow fever certificate, required for Uganda entry</li>
+                  <li>Visa or East African Tourist Visa, sorted before departure</li>
+                  <li>Gorilla permit confirmation forwarded once paid</li>
+                  <li>Travel insurance documents, if purchased separately</li>
+                  <li>Local currency or confirm card acceptance at your lodges</li>
+                </ul>
+              </div>
+              <a href="index.html" class="btn btn--dark" style="margin-top:24px;">Back to home</a>
+            </div>
+          </div>
+
+        </div>
+
+        <aside class="summary">
+          <h4>Trip summary</h4>
+          <div class="summary__row"><span id="sumPkg">Gorilla Trekking &amp; Photography Safari</span><span id="sumBase">$2,840 pp</span></div>
+          <div class="summary__row"><span>Travelers</span><span id="sumTravelers">2</span></div>
+          <div class="summary__row"><span>Add-ons</span><span id="sumAddons">$0</span></div>
+          <div class="summary__total"><span>Total</span><span id="sumTotal">$5,680</span></div>
+          <p style="font-size:12px;color:#A9A18C;margin-top:10px;">Deposit due now (30%): <strong id="sumDeposit" style="color:var(--gold-bright);">$1,704</strong></p>
+          <ul class="checklist" style="margin-top:18px;">
+            <li>Permits and flights billed separately</li>
+            <li>No hidden service fees</li>
+            <li>Full day sheet sent after step 2</li>
+          </ul>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <div class="equator"><span></span></div>
+
+  <section class="section section--ivory" id="entry">
+    <div class="container" style="max-width:780px;">
+      <div class="section__head">
+        <span class="eyebrow on-light">General guidance, always confirm directly</span>
+        <h2>Entry requirements at a glance</h2>
+        <p>Rules change by nationality and by destination, this is a starting point, not a substitute for checking with the relevant embassy or consulate before you travel.</p>
+      </div>
+      <div class="grid grid--2">
+        <div class="reveal" style="padding:20px 0;border-top:1px solid #D8CCA9;"><h4 style="font-size:16px;">Uganda &amp; East Africa</h4><p class="desc" style="margin-top:8px;">Yellow fever vaccination certificate required on arrival. Many nationalities can use the East African Tourist Visa, covering Uganda, Kenya and Rwanda, applied for online before travel.</p></div>
+        <div class="reveal" style="padding:20px 0;border-top:1px solid #D8CCA9;"><h4 style="font-size:16px;">Schengen destinations</h4><p class="desc" style="margin-top:8px;">Passport should be valid at least three months beyond your departure date from the Schengen area, and ideally six. Visa requirements depend on your nationality.</p></div>
+        <div class="reveal" style="padding:20px 0;border-top:1px solid #D8CCA9;"><h4 style="font-size:16px;">UAE</h4><p class="desc" style="margin-top:8px;">Many nationalities receive a visa on arrival or visa-free entry for short stays; we confirm your specific case before booking flights.</p></div>
+        <div class="reveal" style="padding:20px 0;border-top:1px solid #D8CCA9;"><h4 style="font-size:16px;">Japan &amp; Switzerland</h4><p class="desc" style="margin-top:8px;">Visa-exempt for a number of nationalities for short tourist stays; six months' passport validity is the safest assumption for both.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer__brand">
+        <strong>Monalisa Tech Solutions</strong>
+        <p style="margin-top:12px;font-size:14px;color:#9c9277;max-width:280px;">
+          A small Kampala-based trip planning desk. We started in the forests of southwestern Uganda and now plan the onward leg too: Zanzibar, the Maldives, Santorini, wherever the trip goes next.
+        </p>
+        <p style="margin-top:16px;font-size:12.5px;color:#7d7361;">Trips are answered by a person, not a queue.</p>
+      </div>
+      <div>
+        <h5>Get in touch</h5>
+        <a href="https://wa.me/256703953711" target="_blank" rel="noopener">WhatsApp +256 703 953 711</a>
+        <a href="mailto:kabuusumonalisa@gmail.com">kabuusumonalisa@gmail.com</a>
+        <a href="#" onclick="return false;">Kampala, Uganda</a>
+      </div>
+      <div>
+        <h5>Explore</h5>
+        <a href="destinations.html">Destinations</a>
+        <a href="packages.html">Packages</a>
+        <a href="booking.html">Plan a trip</a>
+        <a href="index.html#faq">Questions</a>
+      </div>
+      <div>
+        <h5>Good to know</h5>
+        <a href="index.html#stories">Traveler notebook</a>
+        <a href="packages.html#policy">Cancellation policy</a>
+        <a href="booking.html#entry">Entry requirements</a>
+      </div>
+    </div>
+    <div class="container footer__bottom">
+      <span>Monalisa Tech Solutions, Kampala · est. 2018</span>
+      <span>Demonstration platform · pricing shown is indicative</span>
+    </div>
+  </footer>
+
+  <a class="wa-fab" href="https://wa.me/256703953711" target="_blank" rel="noopener">
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5.1-1.3A10 10 0 1 0 12 2zm5.8 14.2c-.3.8-1.6 1.5-2.3 1.6-.6.1-1.3.2-4.1-1-2.3-1-3.8-3.3-4-3.6-.1-.3-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.3.6-.4.8-.4h.6c.2 0 .5 0 .7.5l1 2.3c.1.2.1.4 0 .6l-.6.8c-.1.2-.2.3 0 .6.3.5 1 1.3 1.7 1.9.9.7 1.6 1 1.9 1.1.2.1.4.1.6-.1l.9-1c.2-.2.4-.2.6-.1l2.1 1c.2.1.4.2.4.4.1.2.1.8-.2 1.6z"/></svg>
+    Chat on WhatsApp
+  </a>
+  <script>
+// nav toggle
+const navToggle = document.getElementById('navToggle');
+const navLinks = document.getElementById('navLinks');
+if(navToggle){navToggle.addEventListener('click',()=>navLinks.classList.toggle('open'));}
+
+// scroll reveal for .reveal and .equator
+const io = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in-view'); } });
+},{threshold:0.18});
+document.querySelectorAll('.reveal, .equator').forEach(el=>io.observe(el));
+
+// faq accordion
+document.querySelectorAll('.faq-q').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    const item = btn.closest('.faq-item');
+    const ans = item.querySelector('.faq-a');
+    const isOpen = item.classList.contains('open');
+    document.querySelectorAll('.faq-item.open').forEach(o=>{
+      if(o!==item){o.classList.remove('open'); o.querySelector('.faq-a').style.maxHeight=null;}
+    });
+    if(isOpen){ item.classList.remove('open'); ans.style.maxHeight=null; }
+    else{ item.classList.add('open'); ans.style.maxHeight = ans.scrollHeight+'px'; }
+  });
+});
+const PACKAGES = {
+  gorilla:   {name:"Gorilla Trekking & Photography Safari", base:2840},
+  zanzibar:  {name:"Zanzibar Honeymoon Escape", base:1960},
+  capetown:  {name:"Cape Town & Stellenbosch", base:3180},
+  marrakech: {name:"Marrakech to the Sahara", base:1540},
+  grandtour: {name:"Santorini & Swiss Alps Grand Tour", base:4420},
+  maldives:  {name:"Maldives Wellness Retreat", base:2260}
+};
+
+let addons = {}; // key -> {pp or flat, amount}
+
+function getParam(name){
+  const params = new URLSearchParams(window.location.search);
+  return params.get(name);
+}
+
+const pkgSelect = document.getElementById('pkgSelect');
+const preselect = getParam('package');
+if(preselect && PACKAGES[preselect]){ pkgSelect.value = preselect; }
+
+function currentTravelers(){
+  const n = parseInt(document.getElementById('travelerCount').value, 10);
+  return isNaN(n) || n < 1 ? 1 : n;
+}
+
+function updateSummary(){
+  const pkg = PACKAGES[pkgSelect.value];
+  const travelers = currentTravelers();
+  let addonTotal = 0;
+  Object.values(addons).forEach(a=>{
+    addonTotal += a.flat ? a.amount : a.amount * travelers;
+  });
+  const base = pkg.base * travelers;
+  const total = base + addonTotal;
+  document.getElementById('sumPkg').textContent = pkg.name;
+  document.getElementById('sumBase').textContent = '$' + pkg.base.toLocaleString() + ' pp';
+  document.getElementById('sumTravelers').textContent = travelers;
+  document.getElementById('sumAddons').textContent = '$' + addonTotal.toLocaleString();
+  document.getElementById('sumTotal').textContent = '$' + total.toLocaleString();
+  document.getElementById('sumDeposit').textContent = '$' + Math.round(total*0.3).toLocaleString();
+}
+pkgSelect.addEventListener('change', updateSummary);
+document.getElementById('travelerCount').addEventListener('input', updateSummary);
+updateSummary();
+
+function goStep(n){
+  for(let i=1;i<=5;i++){
+    document.getElementById('step'+i).style.display = (i===n) ? 'block' : 'none';
+  }
+  document.querySelectorAll('#stepNav li').forEach(li=>{
+    const s = parseInt(li.dataset.step,10);
+    li.classList.remove('active','done');
+    if(s===n) li.classList.add('active');
+    else if(s<n) li.classList.add('done');
+  });
+  window.scrollTo({top: document.getElementById('stepNav').offsetTop - 90, behavior:'smooth'});
+}
+
+function validateStep2(){
+  let ok = true;
+  const name = document.getElementById('fullName').value.trim();
+  const email = document.getElementById('email').value.trim();
+  const phone = document.getElementById('phone').value.trim();
+  const nameField = document.getElementById('f-name');
+  const emailField = document.getElementById('f-email');
+  const phoneField = document.getElementById('f-phone');
+
+  nameField.classList.toggle('invalid', name.length < 2);
+  if(name.length < 2) ok = false;
+
+  const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  emailField.classList.toggle('invalid', !emailOk);
+  if(!emailOk) ok = false;
+
+  phoneField.classList.toggle('invalid', phone.length < 7);
+  if(phone.length < 7) ok = false;
+
+  if(ok){ goStep(3); }
+}
+
+function toggleAddon(btn){
+  const key = btn.dataset.addon;
+  const isOn = btn.classList.toggle('on');
+  if(isOn){
+    if(btn.dataset.pp){ addons[key] = {amount: parseInt(btn.dataset.pp,10), flat:false}; }
+    else { addons[key] = {amount: parseInt(btn.dataset.flat,10), flat:true}; }
+  } else {
+    delete addons[key];
+  }
+  updateSummary();
+}
+
+function selectPay(btn){
+  document.querySelectorAll('.pay-chip').forEach(c=>c.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function confirmBooking(){
+  const ref = 'MTS-2026-' + Math.floor(10000 + Math.random()*89999);
+  document.getElementById('confirmRef').textContent = 'Booking reference ' + ref;
+
+  const dateVal = document.getElementById('travelDate').value;
+  let target;
+  if(dateVal){ target = new Date(dateVal); }
+  else { target = new Date(); target.setDate(target.getDate() + 60); }
+  const today = new Date();
+  let diffDays = Math.ceil((target - today) / (1000*60*60*24));
+  if(diffDays < 0) diffDays = 0;
+
+  const box = document.getElementById('countdownBox');
+  box.innerHTML =
+    '<div><strong>'+diffDays+'</strong><span>Days to go</span></div>'+
+    '<div><strong>'+currentTravelers()+'</strong><span>Traveler'+(currentTravelers()>1?'s':'')+'</span></div>'+
+    '<div><strong>'+PACKAGES[pkgSelect.value].name.split(' ')[0]+'</strong><span>Trip</span></div>';
+
+  goStep(5);
+}
+  </script>
+</body>
+</html>
