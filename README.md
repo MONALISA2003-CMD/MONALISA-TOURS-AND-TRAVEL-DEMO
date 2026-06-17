@@ -1,6 +1,72 @@
-This folder holds four pages built by Monalisa Tech Solutions, a software company based in Kampala. They are not a travel company's own website. They are a working sample, the kind of site Monalisa Tech Solutions shows a client who runs tours, safaris or any travel business and wants a website built around their own brand instead of a template nobody remembers.
-index.html is the homepage of that sample. It introduces a small travel desk, explains why a smaller operation can still feel trustworthy online, and gives a first look at destinations and packages before sending visitors further into the site.
-Ten places show up on destinations.html, from Bwindi in Uganda to Kyoto in Japan. A small route map shows roughly how long each flight takes from the sample company's base, and visitors can filter by mood, romance, wildlife, culture, whatever fits the trip someone has in mind. The point being shown here is how a real client's own destinations could be presented the same way.
-On packages.html sit six full trips with pricing, what each one includes, what it leaves out, and complete day by day plans for two of them. The cancellation policy is explained too, in plain language a client's own customers would actually read instead of skipping past.
-The booking flow, tucked into booking.html, is the part most demos skip entirely. Someone can pick a trip, enter traveler details, add a few extras, and reach a payment step, with the price recalculating the whole way through. It ends with a booking reference and a countdown to the travel date. This part exists to show a prospective client that the website can do more than look good, it can take a booking from start to finish.
-Open index.html first. Every link between the four pages already works, so clicking through feels like browsing a real website rather than four separate files. Send this to anyone Monalisa Tech Solutions wants to convince that they can build the same kind of website for their own tours or travel brand.
+Travel Website Demo
+
+A complete travel website demonstration developed by Monalisa Tech Solutions to showcase how a modern travel, safari, tourism, or destination brand can establish a strong online presence.
+
+This project is not the official website of a travel company. It is a fully functional demonstration created for portfolio presentations, client proposals, and business showcases. The purpose is to help potential clients visualize how their own travel brand, services, destinations, and booking experience could be presented online.
+
+About the Project
+
+The website simulates the experience of a real travel business from the first visit through the booking process.
+
+Visitors can explore destinations, compare travel packages, review detailed itineraries, and complete a booking journey. Every page is connected to create a realistic experience that reflects the standard expected from a professional travel website.
+
+Website Sections
+
+Home Page
+
+The homepage introduces the travel brand and highlights featured destinations, experiences, and services. It is designed to build confidence and encourage visitors to continue exploring the website.
+
+Destinations
+
+The destinations section features locations from different parts of the world. Visitors can browse destinations based on interests such as wildlife, culture, adventure, relaxation, and romance.
+
+Travel Packages
+
+The packages section presents complete travel experiences with pricing information, inclusions, exclusions, and detailed itineraries. It demonstrates how travel services can be presented in a clear and engaging format.
+
+Booking System
+
+The booking section simulates a complete reservation process. Visitors can select a package, enter traveler details, choose optional services, review costs, and receive a booking reference after submission.
+
+Technologies Used
+
+* HTML5
+* CSS3
+* JavaScript
+
+Purpose
+
+This project was created by Monalisa Tech Solutions as a demonstration for travel agencies, safari operators, tourism businesses, and destination brands seeking a professional website.
+
+The design, structure, content, and booking workflow can be customized to match the branding and requirements of individual clients.
+
+Developer
+
+Monalisa Tech Solutions
+
+Software Development and Digital Solutions
+
+GitHub: https://github.com/MONALISA2003-CMD
+
+WhatsApp: +256703953711
+
+License
+
+This project is licensed under the MIT License.
+
+Getting Started
+
+Open "index.html" in your browser to explore the complete website experience.
+
+All navigation links are connected and functional, allowing visitors to move naturally between destinations, packages, and booking pages.
+
+Repository Overview
+
+This repository contains a single integrated website experience built around four core sections:
+
+* Home
+* Destinations
+* Packages
+* Booking
+
+The project demonstrates how a travel business can present services, manage customer inquiries, and guide visitors through a complete booking journey within one website.
